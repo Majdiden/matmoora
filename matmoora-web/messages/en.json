@@ -26,5 +26,20 @@
     "title": "Page not found",
     "description": "The page you requested could not be found.",
     "backHome": "Back to home"
+  },
+  "Preview": {
+    "label": "Preview mode is on",
+    "exit": "Exit preview"
+  },
+  "Comments": {
+    "title": "Comments",
+    "empty": "No comments yet.",
+    "name": "Name",
+    "email": "Email",
+    "emailNote": "Will not be displayed publicly.",
+    "comment": "Comment",
+    "submit": "Submit",
+    "queued": "Thanks — your comment is awaiting moderation.",
+    "failed": "Couldn’t send. Please try again."
   }
 }
