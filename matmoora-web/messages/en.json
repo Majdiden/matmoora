@@ -27,6 +27,11 @@
     "description": "The page you requested could not be found.",
     "backHome": "Back to home"
   },
+  "Error": {
+    "title": "Something went wrong",
+    "description": "We couldn’t finish your request. Please try again.",
+    "retry": "Try again"
+  },
   "Preview": {
     "label": "Preview mode is on",
     "exit": "Exit preview"
