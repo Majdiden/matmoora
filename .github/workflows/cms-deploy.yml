@@ -1,0 +1,55 @@
+name: cms-deploy
+
+# Uploads matmoora-cms/wp-content (mu-plugins, theme stub) and acf-json to the
+# hosted WordPress install via SFTP. Designed for managed hosts like Wevrlabs
+# where WordPress itself isn't ours to deploy — only the custom code is.
+#
+# Required repo secrets:
+#   CMS_SFTP_HOST, CMS_SFTP_USER, CMS_SFTP_PASSWORD, CMS_SFTP_REMOTE_PATH
+# Optional: CMS_SFTP_PORT (defaults to 22)
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'matmoora-cms/wp-content/mu-plugins/**'
+      - 'matmoora-cms/wp-content/themes/matmoora-stub/**'
+      - 'matmoora-cms/acf-json/**'
+      - '.github/workflows/cms-deploy.yml'
+  workflow_dispatch:
+
+jobs:
+  upload:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Sync mu-plugins
+        uses: wlixcc/SFTP-Deploy-Action@v1.2.6
+        with:
+          server: ${{ secrets.CMS_SFTP_HOST }}
+          port: ${{ secrets.CMS_SFTP_PORT || 22 }}
+          username: ${{ secrets.CMS_SFTP_USER }}
+          password: ${{ secrets.CMS_SFTP_PASSWORD }}
+          local_path: 'matmoora-cms/wp-content/mu-plugins/*'
+          remote_path: '${{ secrets.CMS_SFTP_REMOTE_PATH }}/wp-content/mu-plugins'
+
+      - name: Sync theme stub
+        uses: wlixcc/SFTP-Deploy-Action@v1.2.6
+        with:
+          server: ${{ secrets.CMS_SFTP_HOST }}
+          port: ${{ secrets.CMS_SFTP_PORT || 22 }}
+          username: ${{ secrets.CMS_SFTP_USER }}
+          password: ${{ secrets.CMS_SFTP_PASSWORD }}
+          local_path: 'matmoora-cms/wp-content/themes/matmoora-stub/*'
+          remote_path: '${{ secrets.CMS_SFTP_REMOTE_PATH }}/wp-content/themes/matmoora-stub'
+
+      - name: Sync ACF JSON
+        uses: wlixcc/SFTP-Deploy-Action@v1.2.6
+        with:
+          server: ${{ secrets.CMS_SFTP_HOST }}
+          port: ${{ secrets.CMS_SFTP_PORT || 22 }}
+          username: ${{ secrets.CMS_SFTP_USER }}
+          password: ${{ secrets.CMS_SFTP_PASSWORD }}
+          local_path: 'matmoora-cms/acf-json/*'
+          remote_path: '${{ secrets.CMS_SFTP_REMOTE_PATH }}/wp-content/acf-json'

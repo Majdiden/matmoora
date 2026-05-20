@@ -33,11 +33,24 @@ The site runs at `http://localhost:3000`; `/` redirects to `/ar`.
 | `pnpm build` | Production build |
 | `pnpm typecheck` | `tsc --noEmit` |
 | `pnpm lint` | ESLint |
+| `pnpm test` | Vitest unit tests |
+| `pnpm test:e2e` | Playwright + axe end-to-end and a11y tests |
 | `pnpm codegen` | Regenerate `lib/wp/generated.ts` from the WPGraphQL schema |
 
 ## Status
 
-Pre-Phase 1 scaffold. Bilingual routing, layout, i18n, the WP/Meili clients,
-and the API routes (revalidate, search, preview, health) are in place. Content
-types, hero pieces, and font choices are deferred Phase 1 decisions — see
-`docs/TECH_SPEC.md` §21.
+Pre-Phase 1 scaffold. In place:
+
+- Bilingual routing, layout, i18n, RTL, language switcher.
+- WPGraphQL client + lazy Meilisearch client.
+- API routes: revalidate, search proxy, preview/exit-preview, forms submit,
+  comments submit, health.
+- Provider-agnostic `FormRenderer` + `schemaToZod` (Fluent Forms default).
+- Comment list/form with Turnstile + Akismet handoff.
+- Preview banner shown when draft mode is on.
+- CSP, HSTS, frame-ancestors, Permissions-Policy headers in production.
+- Sentry instrumentation (no-op without DSN).
+- Vitest + Playwright + axe scaffolds.
+
+Deferred Phase 1 decisions: content types, hero pieces, font choices. See
+`../docs/TECH_SPEC.md` §21.

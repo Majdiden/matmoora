@@ -4,7 +4,8 @@ Headless WordPress CMS for the Matmoora bilingual content site. Self-managed on
 a VPS via Docker Compose. The public site is rendered by Next.js
 (`../matmoora-web`) — WordPress receives no public traffic.
 
-See `../docs/TECH_SPEC.md` (§16 deployment, §17 security) and `../CLAUDE.md`.
+See `../docs/TECH_SPEC.md` (§16 deployment, §17 security), `../docs/HOSTING.md`
+(hosted-vs-self-managed deployment paths), and `../CLAUDE.md`.
 
 ## What lives in this repo
 
@@ -13,7 +14,7 @@ See `../docs/TECH_SPEC.md` (§16 deployment, §17 security) and `../CLAUDE.md`.
 | `docker-compose.yml` | Production stack: WordPress, MariaDB, Caddy, Meilisearch |
 | `docker-compose.local.yml` | Local development stack |
 | `Caddyfile` | Reverse proxy + auto-HTTPS |
-| `wp-content/mu-plugins/` | Must-use plugins (revalidation, search indexing) |
+| `wp-content/mu-plugins/` | Must-use plugins (revalidation, search indexing, security hardening) |
 | `wp-content/themes/matmoora-stub/` | Headless stub theme |
 | `acf-json/` | JSON-synced ACF field groups |
 | `plugins.lock` | Manually maintained list of installed plugins |
@@ -29,6 +30,8 @@ custom code above is tracked.
   `/api/revalidate` webhook so the affected page rebuilds (TECH_SPEC §7.4).
 - **matmoora-search** — keeps Meilisearch in sync with WP content; provides
   `wp matmoora reindex` for a full rebuild (TECH_SPEC §12).
+- **matmoora-security** — disables XML-RPC, removes the public REST users
+  endpoint, strips WP generator meta (TECH_SPEC §17.2).
 
 ## Plugins
 

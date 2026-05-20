@@ -16,6 +16,7 @@ tooling layer between them (see `CLAUDE.md`).
 
 - `CLAUDE.md` — working agreement (how to work in this repo).
 - `docs/TECH_SPEC.md` — the technical specification (what to build).
+- `docs/HOSTING.md` — deployment paths (hosted WordPress vs self-managed VPS).
 - `.claude/skills/matmoora-build/` — the build skill.
 - `docs/hero-pieces/` — one brief per hero piece (scoped in Phase 1).
 
