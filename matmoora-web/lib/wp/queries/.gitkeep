@@ -1,0 +1,3 @@
+# GraphQL operations live here as kebab-case `.graphql` files (TECH_SPEC §7.2).
+# `pnpm codegen` reads them + the live schema and emits lib/wp/generated.ts.
+# Empty until the Phase 1 content model is locked.

@@ -1,0 +1,11 @@
+/*
+Theme Name: Matmoora Stub
+Theme URI: https://matmoora.org
+Description: Headless stub theme. WordPress is a CMS only — the public site is
+  rendered by Next.js. This theme exists solely to satisfy WordPress's
+  requirement for an active theme. See TECH_SPEC §2 and CLAUDE.md.
+Version: 0.1.0
+Requires at least: 6.0
+Requires PHP: 8.2
+Text Domain: matmoora-stub
+*/

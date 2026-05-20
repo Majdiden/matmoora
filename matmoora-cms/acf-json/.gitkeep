@@ -1,0 +1,3 @@
+# ACF field groups are JSON-synced here (TECH_SPEC §5.4, §18.3).
+# Changes flow through git, never via the WP admin UI in production.
+# Empty until the Phase 1 content model is locked.

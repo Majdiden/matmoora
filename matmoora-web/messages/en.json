@@ -1,0 +1,30 @@
+{
+  "Meta": {
+    "siteName": "Matmoora",
+    "tagline": "Bilingual content site"
+  },
+  "Home": {
+    "title": "Welcome to Matmoora",
+    "intro": "This is the initial scaffold. The content model is not defined yet."
+  },
+  "Nav": {
+    "home": "Home",
+    "search": "Search"
+  },
+  "LangSwitcher": {
+    "label": "Language",
+    "ar": "Arabic",
+    "en": "English"
+  },
+  "Search": {
+    "title": "Search",
+    "placeholder": "Search…",
+    "noResults": "No results",
+    "empty": "Type a query to search"
+  },
+  "NotFound": {
+    "title": "Page not found",
+    "description": "The page you requested could not be found.",
+    "backHome": "Back to home"
+  }
+}

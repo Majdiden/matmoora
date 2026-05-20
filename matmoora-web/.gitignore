@@ -1,0 +1,27 @@
+# dependencies
+/node_modules
+.pnp
+.pnp.*
+
+# next.js
+/.next/
+/out/
+next-env.d.ts
+
+# production
+/build
+
+# codegen output (regenerated from the WPGraphQL schema via `pnpm codegen`)
+/lib/wp/generated.ts
+
+# env files — only .env.example is committed
+.env
+.env*.local
+.env.local
+
+# misc
+.DS_Store
+*.pem
+/coverage
+.vercel
+*.tsbuildinfo

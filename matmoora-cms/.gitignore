@@ -1,0 +1,19 @@
+# Secrets — file-mounted Docker secrets, provisioned separately (TECH_SPEC §17.3).
+/secrets/*
+!/secrets/.gitkeep
+
+# Environment files — only .env.example is committed.
+.env
+.env.local
+
+# WordPress core and plugins are not vendored — only mu-plugins, the theme
+# stub, and acf-json are tracked under wp-content.
+/wp-content/uploads/
+/wp-content/plugins/
+/wp-content/themes/*
+!/wp-content/themes/matmoora-stub/
+/wp-content/upgrade/
+/wp-content/cache/
+
+# misc
+.DS_Store

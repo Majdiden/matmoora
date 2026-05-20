@@ -1,0 +1,22 @@
+@import "tailwindcss";
+
+/*
+ * Tailwind v4 is configured CSS-first (no tailwind.config.ts). The font CSS
+ * variables are provided by lib/fonts.ts via next/font and bound on <html>.
+ */
+@theme {
+  --font-sans: var(--font-en), system-ui, sans-serif;
+  --font-arabic: var(--font-ar), system-ui, sans-serif;
+}
+
+html {
+  font-family: var(--font-sans);
+}
+
+html[lang="ar"] {
+  font-family: var(--font-arabic);
+}
+
+body {
+  min-height: 100dvh;
+}

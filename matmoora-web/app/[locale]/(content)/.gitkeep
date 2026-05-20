@@ -1,0 +1,2 @@
+# Route group for CMS-driven content templates (TECH_SPEC §4).
+# Each content type gets <type>/[slug]/page.tsx once the model is locked.

@@ -1,0 +1,16 @@
+# Reverse proxy with auto-HTTPS — TECH_SPEC §16.3.
+cms.matmoora.org {
+	root * /var/www/html
+	php_fastcgi wordpress:9000
+
+	encode gzip zstd
+
+	# xmlrpc.php disabled at the proxy (TECH_SPEC §17.2).
+	respond /xmlrpc.php 404
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Frame-Options "SAMEORIGIN"
+		Referrer-Policy "strict-origin-when-cross-origin"
+	}
+}
