@@ -159,8 +159,7 @@ matmoora-web/
 ├── public/
 ├── middleware.ts                    # Locale prefix enforcement only
 ├── next.config.ts
-├── tailwind.config.ts
-└── codegen.ts
+└── codegen.ts                       # Tailwind v4 is CSS-first; theme lives in app/globals.css
 ```
 
 **Naming conventions:**
@@ -837,6 +836,11 @@ Target: WCAG 2.1 AA.
 
 The CMS is self-hosted on a VPS. This section captures the deployment shape so it's reproducible.
 
+> **Note:** A managed-WordPress alternative (e.g. Wevrlabs) is also supported.
+> See `docs/HOSTING.md` for the side-by-side; on that path the Docker stack,
+> `Caddyfile`, and `deploy.sh` become local-dev-only, and Meilisearch needs
+> separate hosting.
+
 ### 16.1 Server requirements (baseline)
 
 - VPS with 2 vCPU / 4 GB RAM minimum (Hetzner CPX21 or similar). Upgrade if Meilisearch grows.
@@ -1099,3 +1103,4 @@ These remain open and need answers during Phase 1 or shortly after:
 |---|---|---|
 | 2026-05-19 | Initial draft | — |
 | 2026-05-19 | Phase 1 decisions applied: WPML, self-managed VPS, Arabic default, URL-based i18n, search/forms/comments in scope | — |
+| 2026-05-20 | Hosted-WordPress (Wevrlabs) path added; Tailwind v4 CSS-first config; rate limiting layered on form/comment endpoints; production-only CSP/HSTS/Permissions-Policy; Sentry instrumentation; Fluent Forms set as default forms provider | — |
