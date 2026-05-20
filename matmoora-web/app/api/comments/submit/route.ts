@@ -1,6 +1,7 @@
 import type { NextRequest } from 'next/server';
 import { z } from 'zod';
 import { verifyTurnstile } from '@/lib/turnstile/verify';
+import { callerIp, createRateLimiter, rateLimitedResponse } from '@/lib/ratelimit';
 
 const Payload = z.object({
   post_id: z.coerce.number().int().positive(),
@@ -11,16 +12,24 @@ const Payload = z.object({
   turnstileToken: z.string().optional(),
 });
 
+// 5 comment submissions per IP per 10 minutes.
+const limiter = createRateLimiter(5, 10 * 60 * 1000);
+
 /**
  * Comment submission proxy (TECH_SPEC §14.2-§14.3).
  *
  *   client -> POST /api/comments/submit
+ *          -> rate limit by IP
  *          -> Turnstile verify
  *          -> Zod validation
  *          -> forward to wp/v2/comments (Akismet runs server-side, comments
  *             default to 'unapproved' awaiting moderation)
  */
 export async function POST(req: NextRequest) {
+  const ip = callerIp(req.headers);
+  const limit = await limiter.check(`comments:${ip}`);
+  if (!limit.ok) return rateLimitedResponse(limit);
+
   const json = await req.json().catch(() => null);
   const parsed = Payload.safeParse(json);
   if (!parsed.success) {
@@ -30,7 +39,6 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const ip = req.headers.get('cf-connecting-ip') ?? req.headers.get('x-forwarded-for') ?? undefined;
   const turnstile = await verifyTurnstile(parsed.data.turnstileToken, ip);
   if (!turnstile.ok) {
     return Response.json(

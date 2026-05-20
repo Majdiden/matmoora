@@ -2,11 +2,16 @@ import type { NextRequest } from 'next/server';
 import { schemaToZod } from '@/lib/forms/schemaToZod';
 import { formSubmitEndpoint, getFormSchema } from '@/lib/wp/forms';
 import { verifyTurnstile } from '@/lib/turnstile/verify';
+import { callerIp, createRateLimiter, rateLimitedResponse } from '@/lib/ratelimit';
+
+// 10 form submissions per IP per 10 minutes.
+const limiter = createRateLimiter(10, 10 * 60 * 1000);
 
 /**
  * Form submission proxy (TECH_SPEC §13.4).
  *
  *   client -> POST /api/forms/[id]/submit
+ *          -> rate limit by IP
  *          -> Turnstile verify (server-side)
  *          -> schema fetch + Zod re-validation (never trust the client)
  *          -> forward to WP REST endpoint (Fluent Forms by default)
@@ -16,14 +21,23 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> },
 ) {
   const { id } = await params;
-  const body = (await req.json()) as { data?: unknown; turnstileToken?: string };
+  const ip = callerIp(req.headers);
+  const limit = await limiter.check(`forms:${id}:${ip}`);
+  if (!limit.ok) return rateLimitedResponse(limit);
 
-  const turnstile = await verifyTurnstile(
-    body.turnstileToken,
-    req.headers.get('cf-connecting-ip') ?? undefined,
-  );
+  const body = (await req.json().catch(() => null)) as
+    | { data?: unknown; turnstileToken?: string }
+    | null;
+  if (!body) {
+    return Response.json({ ok: false, error: 'invalid-json' }, { status: 400 });
+  }
+
+  const turnstile = await verifyTurnstile(body.turnstileToken, ip);
   if (!turnstile.ok) {
-    return Response.json({ ok: false, error: 'turnstile', reason: turnstile.reason }, { status: 400 });
+    return Response.json(
+      { ok: false, error: 'turnstile', reason: turnstile.reason },
+      { status: 400 },
+    );
   }
 
   const schema = await getFormSchema(id);
