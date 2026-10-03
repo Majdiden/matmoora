@@ -14,11 +14,17 @@ FROM wordpress:6.5-php8.2-apache
 
 # ------------------------------------------------------------
 # System tools we need at runtime (wp-cli, composer, mariadb client).
-# Kept in a single layer to keep the image lean.
+# Kept in a single layer to keep the image lean. After apt-get, we
+# force Apache back to mpm_prefork — Debian re-enables mpm_event
+# whenever apache2 is touched and PHP's mod_php rejects a mixed
+# MPM config at startup ("More than one MPM loaded").
 # ------------------------------------------------------------
 RUN apt-get update && apt-get install -y --no-install-recommends \
         ca-certificates curl less default-mysql-client git unzip \
-    && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/* \
+    && a2dismod -f mpm_event mpm_worker 2>/dev/null || true \
+    && a2enmod mpm_prefork \
+    && a2enmod rewrite headers
 
 # wp-cli for provisioning + reindex commands.
 RUN curl -fsSL https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar -o /usr/local/bin/wp \

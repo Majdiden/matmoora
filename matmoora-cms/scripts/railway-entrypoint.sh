@@ -19,10 +19,18 @@ if [[ -n "${MYSQL_URL:-}" ]]; then
   export WORDPRESS_DB_NAME="$(echo "$MYSQL_URL" | awk -F[/:@] '{print $8}')"
 fi
 
-# Honour Railway's dynamic $PORT when set.
+# Honour Railway's dynamic $PORT when set. Only touch the two Apache
+# config files that pin the listen port — not every "80" in the tree,
+# which would mangle unrelated values.
 if [[ -n "${PORT:-}" && "${PORT}" != "80" ]]; then
-  sed -i "s/80/${PORT}/g" /etc/apache2/ports.conf /etc/apache2/sites-available/*.conf
+  sed -i -E "s/^(Listen )80$/\1${PORT}/"            /etc/apache2/ports.conf
+  sed -i -E "s/<VirtualHost \*:80>/<VirtualHost *:${PORT}>/" /etc/apache2/sites-available/*.conf
 fi
+
+# Belt-and-braces: make sure only one MPM is enabled. Debian's apache2
+# package likes to re-enable mpm_event behind our back.
+a2dismod -f mpm_event mpm_worker >/dev/null 2>&1 || true
+a2enmod mpm_prefork >/dev/null 2>&1 || true
 
 # Point ACF JSON sync at the repo-mounted directory. The mu-plugin reads
 # WP_CONTENT_DIR/../acf-json — matches the layout we copy in the Dockerfile.
