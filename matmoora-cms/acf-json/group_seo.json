@@ -1,0 +1,21 @@
+{
+  "key": "group_seo",
+  "title": "SEO overrides",
+  "fields": [
+    { "key": "field_seo_title", "label": "SEO title", "name": "seo_title", "type": "text", "show_in_graphql": 1 },
+    { "key": "field_seo_description", "label": "SEO description", "name": "seo_description", "type": "textarea", "rows": 3, "maxlength": 320, "show_in_graphql": 1 },
+    { "key": "field_seo_og_image", "label": "OG image", "name": "seo_og_image", "type": "image", "return_format": "array", "preview_size": "medium", "show_in_graphql": 1 }
+  ],
+  "location": [
+    [{"param": "post_type", "operator": "==", "value": "investigation"}],
+    [{"param": "post_type", "operator": "==", "value": "article"}],
+    [{"param": "post_type", "operator": "==", "value": "story"}],
+    [{"param": "post_type", "operator": "==", "value": "publication"}],
+    [{"param": "post_type", "operator": "==", "value": "video"}],
+    [{"param": "post_type", "operator": "==", "value": "audio"}]
+  ],
+  "position": "side",
+  "show_in_graphql": 1,
+  "graphql_field_name": "seoFields",
+  "graphql_types": ["Investigation", "Article", "Story", "Publication", "Video", "Audio"]
+}

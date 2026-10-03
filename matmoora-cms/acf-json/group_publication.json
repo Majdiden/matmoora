@@ -1,0 +1,13 @@
+{
+  "key": "group_publication",
+  "title": "Publication (flipbook)",
+  "fields": [
+    { "key": "field_pub_file", "label": "Publication PDF", "name": "publication_pdf", "type": "file", "return_format": "array", "mime_types": "pdf", "show_in_graphql": 1 },
+    { "key": "field_pub_flipbook_url", "label": "Flipbook URL", "name": "flipbook_url", "type": "url", "show_in_graphql": 1 },
+    { "key": "field_pub_kind", "label": "Publication kind", "name": "publication_kind", "type": "select", "choices": {"booklet": "Booklet", "brochure": "Brochure", "magazine": "Magazine", "comic": "Comic"}, "default_value": "booklet", "show_in_graphql": 1 }
+  ],
+  "location": [[{"param": "post_type", "operator": "==", "value": "publication"}]],
+  "show_in_graphql": 1,
+  "graphql_field_name": "publicationFields",
+  "graphql_types": ["Publication"]
+}
