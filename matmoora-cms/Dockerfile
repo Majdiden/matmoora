@@ -1,23 +1,23 @@
 # ------------------------------------------------------------
 # Matmoora WordPress — Railway/Docker image
 # ------------------------------------------------------------
-# One image that works for both the Docker Compose stack (VPS) and Railway
-# single-service deploys. Railway doesn't support docker-compose; each service
-# is deployed independently from its own Dockerfile. This image is the
-# WordPress service — pair it with Railway's MariaDB plugin + a Meilisearch
-# service (also from this repo, see Meilisearch.Dockerfile).
+# One image for both the Docker Compose stack (VPS) and Railway. Railway
+# doesn't support docker-compose; each service deploys independently from
+# its own Dockerfile. Pair this with Railway's MariaDB plugin and the
+# Meilisearch service in ./meilisearch/.
 #
-# Build:   docker build -t matmoora-cms .
-# Railway: this file is auto-detected; set the env vars in RAILWAY_DEPLOY.md.
+# IMPORTANT: the official wordpress:apache base declares /var/www/html as
+# a VOLUME. Writes there at build time are discarded on container start;
+# the base entrypoint copies files from /usr/src/wordpress/ instead. All
+# plugins / mu-plugins / themes / ACF JSON therefore live under
+# /usr/src/wordpress/ so they survive first boot.
 
 FROM wordpress:6.5-php8.2-apache
 
 # ------------------------------------------------------------
 # System tools we need at runtime (wp-cli, composer, mariadb client).
-# Kept in a single layer to keep the image lean. After apt-get, we
-# force Apache back to mpm_prefork — Debian re-enables mpm_event
-# whenever apache2 is touched and PHP's mod_php rejects a mixed
-# MPM config at startup ("More than one MPM loaded").
+# Also force Apache to mpm_prefork — Debian re-enables mpm_event behind
+# our back and PHP's mod_php rejects a mixed MPM config at startup.
 # ------------------------------------------------------------
 RUN apt-get update && apt-get install -y --no-install-recommends \
         ca-certificates curl less default-mysql-client git unzip \
@@ -30,31 +30,38 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 RUN curl -fsSL https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar -o /usr/local/bin/wp \
     && chmod +x /usr/local/bin/wp
 
-# ------------------------------------------------------------
-# Composer-managed plugins. These come from public sources only; the paid
-# ACF Pro and WPML plugins must be dropped into wp-content/plugins/ at
-# deploy time via a Railway "Volume" (see RAILWAY_DEPLOY.md).
-# ------------------------------------------------------------
+# Composer, used to install the public WP plugins.
 RUN curl -fsSL https://getcomposer.org/installer | php -- \
         --install-dir=/usr/local/bin --filename=composer
 
-WORKDIR /tmp/plugins
+# ------------------------------------------------------------
+# Install the public plugins into the WordPress SOURCE directory, not
+# into /var/www/html (which the base image's VOLUME wipes on start).
+# ACF Pro and WPML are paid and must be dropped in via the WP admin;
+# see RAILWAY_DEPLOY.md.
+# ------------------------------------------------------------
+WORKDIR /tmp/matmoora-plugins
 COPY composer.json ./
-RUN composer install --no-dev --prefer-dist --no-interaction \
-    && mv vendor /var/www/html/wp-content/vendor \
-    && mv wp-content/plugins/* /var/www/html/wp-content/plugins/ 2>/dev/null || true
+RUN composer install --no-dev --prefer-dist --no-interaction --no-autoloader \
+    && mkdir -p /usr/src/wordpress/wp-content/plugins \
+    && mv wp-content/plugins/* /usr/src/wordpress/wp-content/plugins/ \
+    && cd / && rm -rf /tmp/matmoora-plugins
 
 # ------------------------------------------------------------
-# Ship the mu-plugins + acf-json + theme stub + entrypoint.
+# Ship the mu-plugins + acf-json + stub theme to the SOURCE dir so
+# first-boot extraction carries them into /var/www/html. The ACF JSON
+# directory sits one level above wp-content so the mu-plugin's
+# WP_CONTENT_DIR/../acf-json resolves correctly.
 # ------------------------------------------------------------
+COPY wp-content/mu-plugins /usr/src/wordpress/wp-content/mu-plugins
+COPY wp-content/themes/matmoora-stub /usr/src/wordpress/wp-content/themes/matmoora-stub
+COPY acf-json /usr/src/wordpress/acf-json
+
+# Entrypoint.
 WORKDIR /var/www/html
-COPY wp-content/mu-plugins /var/www/html/wp-content/mu-plugins
-COPY wp-content/themes/matmoora-stub /var/www/html/wp-content/themes/matmoora-stub
-COPY acf-json /var/www/acf-json
 COPY scripts/railway-entrypoint.sh /usr/local/bin/railway-entrypoint.sh
 RUN chmod +x /usr/local/bin/railway-entrypoint.sh
 
-# WordPress listens on 80; Railway sets $PORT dynamically.
 ENV PORT=80
 EXPOSE 80
 
