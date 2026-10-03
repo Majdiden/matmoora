@@ -6,15 +6,21 @@ const withNextIntl = createNextIntlPlugin('./lib/i18n/request.ts');
 const isProd = process.env.NEXT_PUBLIC_ENV === 'production';
 
 /**
- * Production CSP (TECH_SPEC §17.1). Restrictive default, opened only for the
- * scripts/origins we actually use:
- *   - Cloudflare Turnstile (forms + comments)
- *   - Sentry tunnel (configure via NEXT_PUBLIC_SENTRY_DSN host)
- *   - WordPress media (next/image remote pattern)
- *
- * Note: 'unsafe-inline' on script-src stays until we adopt nonces — Next 15
- * inlines bootstrap scripts and we'd need middleware nonce injection to drop
- * it cleanly. Tracked as a hardening task.
+ * Where the WordPress admin lives. Headless architecture — wp-admin stays
+ * on the CMS host (Railway) and we just redirect editors from the public
+ * site's /wp-admin to it. Falls back to the same env var the data layer
+ * uses, with the Railway production domain as a last-resort default so
+ * builds don't fail if the env isn't wired.
+ */
+const WP_ADMIN_ORIGIN = (() => {
+  const base = process.env.WP_BASE_URL
+    ?? (process.env.WORDPRESS_GRAPHQL_ENDPOINT ?? '').replace(/\/graphql\/?$/, '')
+    ?? 'https://matmoora-cms-production.up.railway.app';
+  return base.replace(/\/$/, '');
+})();
+
+/**
+ * Production CSP (TECH_SPEC §17.1).
  */
 const csp = [
   "default-src 'self'",
@@ -46,13 +52,32 @@ if (isProd) {
 
 const nextConfig: NextConfig = {
   images: {
-    // Self-hosted WordPress media subdomain — see TECH_SPEC §11.3. Add the
-    // Wevrlabs domain here too once known.
-    remotePatterns: [{ protocol: 'https', hostname: 'cms.matmoora.org' }],
+    remotePatterns: [
+      { protocol: 'https', hostname: 'cms.matmoora.org' },
+      { protocol: 'https', hostname: 'matmoora-cms-production.up.railway.app' },
+    ],
     formats: ['image/avif', 'image/webp'],
   },
   async headers() {
     return [{ source: '/:path*', headers: securityHeaders }];
+  },
+  /**
+   * Editor-only paths — forward to the WordPress install on Railway so
+   * `https://<vercel>/wp-admin` just works instead of 404'ing. Admin UX
+   * ends up on the CMS domain (cookies, redirects, two-factor all stay
+   * on one origin — the only pattern that doesn't break WP admin).
+   */
+  async redirects() {
+    const admin = [
+      { source: '/wp-admin',           destination: `${WP_ADMIN_ORIGIN}/wp-admin/`,         permanent: false },
+      { source: '/wp-admin/',          destination: `${WP_ADMIN_ORIGIN}/wp-admin/`,         permanent: false },
+      { source: '/wp-admin/:path*',    destination: `${WP_ADMIN_ORIGIN}/wp-admin/:path*`,   permanent: false },
+      { source: '/wp-login.php',       destination: `${WP_ADMIN_ORIGIN}/wp-login.php`,      permanent: false },
+      { source: '/wp-login',           destination: `${WP_ADMIN_ORIGIN}/wp-login.php`,      permanent: false },
+      // Alias for editors — type /admin, land in wp-admin.
+      { source: '/admin',              destination: `${WP_ADMIN_ORIGIN}/wp-admin/`,         permanent: false },
+    ];
+    return admin;
   },
 };
 
