@@ -46,7 +46,7 @@ export default async function LocaleLayout({
       dir={dirForLocale(typedLocale)}
       className={`${fontArabic.variable} ${fontLatin.variable}`}
     >
-      <body className="flex min-h-dvh flex-col bg-white text-neutral-900 antialiased">
+      <body className="bg-topographic-navy flex min-h-dvh flex-col text-[var(--color-cream)] antialiased">
         <NextIntlClientProvider>
           <PreviewBanner locale={typedLocale} />
           <Header locale={typedLocale} />

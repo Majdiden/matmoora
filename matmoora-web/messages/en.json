@@ -1,20 +1,95 @@
 {
   "Meta": {
     "siteName": "Matmoora",
-    "tagline": "Bilingual content site"
-  },
-  "Home": {
-    "title": "Welcome to Matmoora",
-    "intro": "This is the initial scaffold. The content model is not defined yet."
+    "siteNameArabic": "مطمورة",
+    "tagline": "A public archive of documented human rights violations in Sudan"
   },
   "Nav": {
-    "home": "Home",
+    "collections": "Investigations",
+    "archive": "Archive",
+    "about": "About",
     "search": "Search"
   },
   "LangSwitcher": {
     "label": "Language",
-    "ar": "Arabic",
+    "ar": "العربية",
     "en": "English"
+  },
+  "Home": {
+    "eyebrow": "The Matmoora archive",
+    "echo": "أرشيف مطمورة",
+    "title": "Documenting human rights violations in Sudan",
+    "intro": "Matmoora collects long-form investigations, stories, testimonies, and visual material on human rights violations in Sudan — free to use as a reference for accountability, remembrance, and analysis.",
+    "eventsHeading": "Investigations & events",
+    "eventsSub": "Each investigation is an entry point into the reports, articles, stories, videos, and booklets connected to it.",
+    "empty": "No investigations have been published yet."
+  },
+  "Investigation": {
+    "snapshot": "Snapshot",
+    "timeframe": "Timeframe",
+    "location": "Location",
+    "methodology": "Methodology",
+    "partners": "Partners",
+    "languages": "Languages",
+    "downloadPdf": "Download the full report (PDF)",
+    "relatedContent": "Related content",
+    "relatedInvestigations": "Related investigations",
+    "activities": "Related activities",
+    "backToCollections": "Back to investigations",
+    "publishedOn": "Published",
+    "eventDate": "Event date"
+  },
+  "Archive": {
+    "title": "The archive",
+    "echo": "الأرشيف",
+    "eyebrow": "Every piece, one place",
+    "intro": "Search the full archive: reports, articles, stories, booklets, comics, videos, and audio. Filter by location, year, content type, or theme.",
+    "searchPlaceholder": "Search the archive…",
+    "filters": "Filters",
+    "clearAll": "Reset",
+    "location": "Location",
+    "year": "Year",
+    "type": "Content type",
+    "theme": "Theme",
+    "resultsCount": "{count} results",
+    "noResults": "No results for the current search.",
+    "showFilters": "Show filters",
+    "hideFilters": "Hide filters"
+  },
+  "ContentType": {
+    "investigation": "Investigation",
+    "article": "Article",
+    "story": "Story",
+    "publication": "Publication",
+    "video": "Video",
+    "audio": "Audio"
+  },
+  "About": {
+    "title": "About",
+    "echo": "من نحن",
+    "eyebrow": "The people behind the archive",
+    "intro": "Matmoora is an independent Sudanese initiative building a public, free-to-use record of human rights violations in Sudan — investigations, testimonies, and evidence held together for accountability, memory, and analysis.",
+    "statInvestigations": "Investigations",
+    "statPieces": "Content pieces",
+    "statLanguages": "Languages",
+    "statMethodology": "Verified sources",
+    "whoTitle": "Who we are",
+    "whoEcho": "من نحن",
+    "whoBody": "An independent Sudanese initiative documenting human rights violations in Sudan and turning that documentation into a public reference for legal accountability, collective memory, and analysis. We are researchers, journalists, artists and community members working together.",
+    "whatTitle": "What we do",
+    "whatEcho": "ماذا نفعل",
+    "whatBody": "We produce long-form investigations grounded in field interviews and open-source analysis, and translate them into stories, testimonies, and visual and audio material that reach audiences in their own language. Every investigation is an entry point into the full body of evidence around it.",
+    "howTitle": "How we work",
+    "howEcho": "كيف نعمل",
+    "howBody": "We follow a dual methodology combining closed sources — field interviews with survivors, witnesses, and practitioners — with open-source analysis of images, videos, documents, and satellite imagery. Every claim is cross-verified against standard protocols such as the Berkeley Protocol on Digital Open Source Investigations.",
+    "contactTitle": "How to work with us",
+    "contactEcho": "كيف تعمل معنا",
+    "contactBody": "For collaboration, data requests, or to share information that could support an investigation, reach us at the address below.",
+    "contactEmail": "hello@matmoora.org",
+    "contactActionLabel": "Write to us",
+    "continueExploring": "Continue exploring",
+    "continueInvestigations": "Investigations",
+    "continueArchive": "The archive"
   },
   "Search": {
     "title": "Search",
@@ -41,5 +116,10 @@
     "submit": "Submit",
     "queued": "Thanks — your comment is awaiting moderation.",
     "failed": "Couldn’t send. Please try again."
+  },
+  "Footer": {
+    "rights": "All rights reserved",
+    "contact": "Contact",
+    "socials": "Follow us"
   }
 }

@@ -1,18 +1,28 @@
-import { Inter, Noto_Sans_Arabic } from 'next/font/google';
+import { Cairo, Poppins } from 'next/font/google';
 
 /**
- * Placeholder fonts (TECH_SPEC §6.3, §21 Open Question 2). The final Arabic and
- * English faces are a Phase 1 decision. Swapping them later is a one-file change
- * — keep all font wiring in this module.
+ * Brand fonts (visual identity — Drive: Fonts and Colors).
+ *
+ * Locked faces per the identity sheet:
+ *   Arabic titles: DIN Next LT Arabic
+ *   Arabic body:   DIN Next Arabic
+ *   English:       Poppins
+ *
+ * DIN Next is a licensed Monotype family and is not served by Google Fonts.
+ * Until the licensed files are placed at `public/fonts/din-next-arabic/`
+ * (and this module is switched to `next/font/local`), we ship Cairo as the
+ * closest permissively licensed Arabic substitute.
  */
-export const fontArabic = Noto_Sans_Arabic({
+export const fontArabic = Cairo({
   subsets: ['arabic'],
   display: 'swap',
+  weight: ['400', '500', '700', '900'],
   variable: '--font-ar',
 });
 
-export const fontLatin = Inter({
+export const fontLatin = Poppins({
   subsets: ['latin'],
   display: 'swap',
+  weight: ['400', '500', '600', '700'],
   variable: '--font-en',
 });
