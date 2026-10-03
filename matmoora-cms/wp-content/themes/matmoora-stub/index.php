@@ -1,12 +1,8 @@
 <?php
 /**
- * Headless stub. The public site is rendered by Next.js — this file only runs
- * if the template_redirect in functions.php has nothing to redirect to.
+ * Matmoora stub theme — the public site is Next.js. Any direct request to
+ * the WordPress frontend is redirected to the configured public URL.
  */
-
-if (!defined('ABSPATH')) {
-    exit;
-}
-
-http_response_code(200);
-echo 'Matmoora CMS — headless. Public site is served by the Next.js frontend.';
+$public = getenv('MATMOORA_PUBLIC_URL') ?: 'https://matmoora.org';
+wp_redirect($public . ($_SERVER['REQUEST_URI'] ?? '/'), 302);
+exit;
