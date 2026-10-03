@@ -15,7 +15,7 @@
 FROM wordpress:6.5-php8.2-apache
 
 # ------------------------------------------------------------
-# System tools we need at runtime (wp-cli, composer, mariadb client).
+# System tools we need at runtime (wp-cli, mariadb client, unzip).
 # Also force Apache to mpm_prefork — Debian re-enables mpm_event behind
 # our back and PHP's mod_php rejects a mixed MPM config at startup.
 # ------------------------------------------------------------
@@ -30,25 +30,26 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 RUN curl -fsSL https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar -o /usr/local/bin/wp \
     && chmod +x /usr/local/bin/wp
 
-# Composer, used to install the public WP plugins.
-RUN curl -fsSL https://getcomposer.org/installer | php -- \
-        --install-dir=/usr/local/bin --filename=composer
+# ------------------------------------------------------------
+# Install the public plugins directly from wordpress.org into the
+# WordPress SOURCE directory. Composer's installer-paths were silently
+# producing an empty wp-content/plugins/ in build, so this is the
+# simpler and more reliable path. Paid plugins (ACF Pro, WPML) still
+# have to be dropped in via the WP admin — see RAILWAY_DEPLOY.md.
+# ------------------------------------------------------------
+WORKDIR /usr/src/wordpress/wp-content/plugins
+RUN set -e; \
+    for slug in wp-graphql wordpress-seo add-wpgraphql-seo wordfence; do \
+      echo "[matmoora] installing ${slug}"; \
+      curl -fsSL "https://downloads.wordpress.org/plugin/${slug}.latest-stable.zip" -o "/tmp/${slug}.zip"; \
+      unzip -q "/tmp/${slug}.zip" -d .; \
+      rm "/tmp/${slug}.zip"; \
+    done; \
+    echo "[matmoora] installed plugins:"; \
+    ls -1
 
 # ------------------------------------------------------------
-# Install the public plugins into the WordPress SOURCE directory, not
-# into /var/www/html (which the base image's VOLUME wipes on start).
-# ACF Pro and WPML are paid and must be dropped in via the WP admin;
-# see RAILWAY_DEPLOY.md.
-# ------------------------------------------------------------
-WORKDIR /tmp/matmoora-plugins
-COPY composer.json ./
-RUN composer install --no-dev --prefer-dist --no-interaction --no-autoloader \
-    && mkdir -p /usr/src/wordpress/wp-content/plugins \
-    && mv wp-content/plugins/* /usr/src/wordpress/wp-content/plugins/ \
-    && cd / && rm -rf /tmp/matmoora-plugins
-
-# ------------------------------------------------------------
-# Ship the mu-plugins + acf-json + stub theme to the SOURCE dir so
+# Ship the mu-plugins + stub theme + ACF JSON to the SOURCE dir so
 # first-boot extraction carries them into /var/www/html. The ACF JSON
 # directory sits one level above wp-content so the mu-plugin's
 # WP_CONTENT_DIR/../acf-json resolves correctly.
