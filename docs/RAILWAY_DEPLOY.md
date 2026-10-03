@@ -55,19 +55,22 @@ Railway is the chosen host because it runs the whole Docker stack as independent
 
 ## Phase 2 — Meilisearch service
 
-1. In the same Railway project: **New → GitHub repo** → pick the same repo again, this time pointing the Dockerfile path to `matmoora-cms/Meilisearch.Dockerfile`.
-2. Add a **Volume** mounted at `/meili_data` (Railway Volumes are persistent across deploys).
-3. On the Meilisearch service **Variables**:
+1. In the same Railway project: **New Service → GitHub Repo** → pick `Majdiden/matmoora` again.
+2. In the new service → **Settings → Service**:
+   - **Root Directory**: `matmoora-cms/meilisearch`
+   - Railway auto-detects the `Dockerfile` + `railway.json` in that folder.
+3. Add a **Volume** mounted at `/meili_data` (Railway Volumes are persistent across deploys).
+4. On the Meilisearch service **Variables**:
    ```
-   MEILI_MASTER_KEY=<generate another 32-byte secret>
+   MEILI_MASTER_KEY=<generate: openssl rand -hex 32>
    ```
-4. Deploy. Note the public URL (something like `matmoora-meili-production.up.railway.app`).
-5. Back on the WordPress service, set:
+5. **Networking → Generate Domain** so WP + the search proxy can reach it over HTTPS. Note the URL.
+6. Back on the WordPress service, set:
    ```
    MEILI_HOST=https://matmoora-meili-production.up.railway.app
    MEILI_MASTER_KEY=<same secret>
    ```
-6. Trigger a redeploy of the WordPress service so it picks up the new vars.
+7. Trigger a redeploy of the WordPress service so it picks up the new vars.
 
 ---
 
