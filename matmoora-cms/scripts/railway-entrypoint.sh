@@ -19,13 +19,11 @@ if [[ -n "${MYSQL_URL:-}" ]]; then
   export WORDPRESS_DB_NAME="$(echo "$MYSQL_URL" | awk -F[/:@] '{print $8}')"
 fi
 
-# Honour Railway's dynamic $PORT when set. Only touch the two Apache
-# config files that pin the listen port — not every "80" in the tree,
-# which would mangle unrelated values.
-if [[ -n "${PORT:-}" && "${PORT}" != "80" ]]; then
-  sed -i -E "s/^(Listen )80$/\1${PORT}/"            /etc/apache2/ports.conf
-  sed -i -E "s/<VirtualHost \*:80>/<VirtualHost *:${PORT}>/" /etc/apache2/sites-available/*.conf
-fi
+# Apache listens on port 80 (declared via EXPOSE 80 in the Dockerfile).
+# Railway reads EXPOSE and routes external HTTPS 443 → container port 80
+# automatically, so we deliberately do NOT rewrite Apache's listen port
+# based on $PORT. Doing so previously moved Apache off port 80 while
+# Railway kept proxying to 80, causing a timeout at the edge.
 
 # Belt-and-braces: make sure only one MPM is enabled. Debian's apache2
 # package likes to re-enable mpm_event behind our back.
