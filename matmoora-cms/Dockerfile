@@ -12,7 +12,7 @@
 # plugins / mu-plugins / themes / ACF JSON therefore live under
 # /usr/src/wordpress/ so they survive first boot.
 
-FROM wordpress:6.5-php8.2-apache
+FROM wordpress:6.9-php8.3-apache
 
 # ------------------------------------------------------------
 # System tools we need at runtime (wp-cli, mariadb client, unzip).
