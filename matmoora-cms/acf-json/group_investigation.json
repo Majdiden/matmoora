@@ -1,0 +1,18 @@
+{
+  "key": "group_investigation",
+  "title": "Investigation snapshot",
+  "fields": [
+    { "key": "field_inv_event_start", "label": "Event start date", "name": "event_start", "type": "date_picker", "display_format": "Y-m-d", "return_format": "Y-m-d", "show_in_graphql": 1 },
+    { "key": "field_inv_event_end", "label": "Event end date", "name": "event_end", "type": "date_picker", "display_format": "Y-m-d", "return_format": "Y-m-d", "show_in_graphql": 1 },
+    { "key": "field_inv_methodology_summary", "label": "Methodology summary", "name": "methodology_summary", "type": "textarea", "rows": 4, "show_in_graphql": 1 },
+    { "key": "field_inv_full_report_pdf", "label": "Full report (PDF)", "name": "full_report_pdf", "type": "file", "return_format": "array", "mime_types": "pdf", "show_in_graphql": 1 },
+    { "key": "field_inv_executive_summary", "label": "Executive summary", "name": "executive_summary", "type": "wysiwyg", "toolbar": "full", "media_upload": 1, "show_in_graphql": 1 },
+    { "key": "field_inv_related_investigations", "label": "Related investigations", "name": "related_investigations", "type": "relationship", "post_type": ["investigation"], "return_format": "id", "show_in_graphql": 1 },
+    { "key": "field_inv_related_activities", "label": "Related activities", "name": "related_activities", "type": "relationship", "post_type": ["activity"], "return_format": "id", "show_in_graphql": 1 },
+    { "key": "field_inv_languages", "label": "Languages available", "name": "languages", "type": "checkbox", "choices": {"ar": "Arabic", "en": "English"}, "default_value": ["ar"], "show_in_graphql": 1 }
+  ],
+  "location": [[{"param": "post_type", "operator": "==", "value": "investigation"}]],
+  "show_in_graphql": 1,
+  "graphql_field_name": "investigationFields",
+  "graphql_types": ["Investigation"]
+}

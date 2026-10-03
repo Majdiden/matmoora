@@ -1,0 +1,15 @@
+{
+  "key": "group_activity",
+  "title": "Activity",
+  "fields": [
+    { "key": "field_act_when", "label": "Date", "name": "when", "type": "date_picker", "display_format": "Y-m-d", "return_format": "Y-m-d", "show_in_graphql": 1 },
+    { "key": "field_act_city", "label": "City", "name": "city", "type": "text", "show_in_graphql": 1 },
+    { "key": "field_act_country", "label": "Country", "name": "country", "type": "text", "show_in_graphql": 1 },
+    { "key": "field_act_external_url", "label": "External link", "name": "external_url", "type": "url", "show_in_graphql": 1 },
+    { "key": "field_act_investigation_ref", "label": "Related investigation", "name": "investigation_ref", "type": "post_object", "post_type": ["investigation"], "return_format": "id", "show_in_graphql": 1 }
+  ],
+  "location": [[{"param": "post_type", "operator": "==", "value": "activity"}]],
+  "show_in_graphql": 1,
+  "graphql_field_name": "activityFields",
+  "graphql_types": ["Activity"]
+}

@@ -1,0 +1,20 @@
+{
+  "key": "group_content_shared",
+  "title": "Content — shared fields",
+  "fields": [
+    { "key": "field_shared_event_date", "label": "Event date", "name": "event_date", "type": "date_picker", "display_format": "Y-m-d", "return_format": "Y-m-d", "show_in_graphql": 1 },
+    { "key": "field_shared_investigation_ref", "label": "Parent investigation", "name": "investigation_ref", "type": "post_object", "post_type": ["investigation"], "return_format": "id", "show_in_graphql": 1 },
+    { "key": "field_shared_contributors", "label": "Contributors", "name": "contributors", "type": "text", "show_in_graphql": 1 },
+    { "key": "field_shared_language", "label": "Language", "name": "language", "type": "select", "choices": {"ar": "Arabic", "en": "English", "both": "Bilingual"}, "default_value": "ar", "show_in_graphql": 1 }
+  ],
+  "location": [
+    [{"param": "post_type", "operator": "==", "value": "article"}],
+    [{"param": "post_type", "operator": "==", "value": "story"}],
+    [{"param": "post_type", "operator": "==", "value": "publication"}],
+    [{"param": "post_type", "operator": "==", "value": "video"}],
+    [{"param": "post_type", "operator": "==", "value": "audio"}]
+  ],
+  "show_in_graphql": 1,
+  "graphql_field_name": "sharedFields",
+  "graphql_types": ["Article", "Story", "Publication", "Video", "Audio"]
+}

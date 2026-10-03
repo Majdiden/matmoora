@@ -1,0 +1,27 @@
+{
+  "name": "matmoora/cms",
+  "description": "Composer-managed WordPress plugins for the Matmoora CMS. Paid plugins (ACF Pro, WPML) are installed separately via Railway volume.",
+  "type": "project",
+  "require": {
+    "php": ">=8.1",
+    "composer/installers": "^2.2",
+    "wpackagist-plugin/wp-graphql": "^1.26",
+    "wpackagist-plugin/wordpress-seo": "^22",
+    "wpackagist-plugin/add-wpgraphql-seo": "^4.21",
+    "wpackagist-plugin/akismet": "^5.3",
+    "wpackagist-plugin/wordfence": "^7.11"
+  },
+  "repositories": [
+    { "type": "composer", "url": "https://wpackagist.org", "only": ["wpackagist-plugin/*", "wpackagist-theme/*"] }
+  ],
+  "extra": {
+    "installer-paths": {
+      "wp-content/plugins/{$name}/": ["type:wordpress-plugin"]
+    }
+  },
+  "config": {
+    "allow-plugins": {
+      "composer/installers": true
+    }
+  }
+}

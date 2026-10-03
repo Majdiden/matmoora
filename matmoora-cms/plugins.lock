@@ -1,25 +1,36 @@
 # plugins.lock — manually maintained list of WordPress plugins in use.
 #
-# Rule (CLAUDE.md): never enable a plugin without adding it here. Keeps prod
-# and dev aligned. Each plugin is also explained in README.md.
+# Rule (CLAUDE.md): never enable a plugin without adding it here.
 #
-# Columns: slug | purpose | update-policy
-#   auto   = auto-updates enabled (core + minor)
-#   manual = updated by hand after a content-fetch smoke test (can break schema)
-#
-# Status: pre-Phase 1 — nothing installed yet. The list below is the planned
-# set from TECH_SPEC §3; mark each as installed when it actually goes in.
+# Columns: slug | purpose | update-policy | status
+#   auto      = auto-updates enabled (core + minor)
+#   manual    = updated by hand after a content-fetch smoke test
+#   shipped   = loaded as a mu-plugin from this repo
+#   planned   = decided but not yet installed on any environment
 
-wpgraphql              | Public GraphQL API surface                  | manual   | planned
-advanced-custom-fields-pro | Custom fields (ACF Pro)                 | auto     | planned
-wpgraphql-acf          | Exposes ACF fields through WPGraphQL        | manual   | planned
-wordpress-seo          | Yoast SEO                                   | auto     | planned
-add-wpgraphql-seo      | Exposes Yoast data through WPGraphQL         | auto     | planned
-sitepress-multilingual-cms | WPML — multilingual                     | manual   | planned
-wp-graphql-wpml        | Exposes WPML translations through WPGraphQL | manual   | planned
-akismet                | Comment spam filtering                      | auto     | planned
-wordfence              | WAF + 2FA enforcement for admin accounts    | auto     | planned
+# ----- GraphQL surface -----
+wpgraphql                   | Public GraphQL API surface                   | manual   | planned
+advanced-custom-fields-pro  | Custom fields (ACF Pro)                      | auto     | planned
+wpgraphql-acf               | Exposes ACF fields through WPGraphQL         | manual   | planned
 
-# Deferred — final pick is a Phase 3 decision (TECH_SPEC §21 Q3):
-# fluentform           | Forms (preferred)                           | auto     | deferred
-# gravityforms         | Forms (alternative)                         | auto     | deferred
+# ----- SEO -----
+wordpress-seo               | Yoast SEO                                    | auto     | planned
+add-wpgraphql-seo           | Exposes Yoast data through WPGraphQL         | auto     | planned
+
+# ----- Multilingual (TECH_SPEC decision: WPML) -----
+sitepress-multilingual-cms  | WPML — multilingual                          | manual   | planned
+wp-graphql-wpml             | Exposes WPML translations through WPGraphQL  | manual   | planned
+
+# ----- Security & comments -----
+akismet                     | Comment spam filtering                       | auto     | planned
+wordfence                   | WAF + 2FA enforcement for admin accounts     | auto     | planned
+
+# ----- Forms (Phase 3 pick) -----
+# fluentform                | Forms (preferred)                            | auto     | deferred
+# gravityforms              | Forms (alternative)                          | auto     | deferred
+
+# ----- Custom mu-plugins shipped in this repo (always loaded) -----
+matmoora-content-model      | CPTs + taxonomies + ACF JSON sync            | n/a      | shipped
+matmoora-revalidate         | On-demand Next.js ISR revalidation           | n/a      | shipped
+matmoora-search             | Meilisearch indexer                          | n/a      | shipped
+matmoora-security           | WP hardening (disable XML-RPC, editor, …)    | n/a      | shipped

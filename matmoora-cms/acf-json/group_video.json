@@ -1,0 +1,13 @@
+{
+  "key": "group_video",
+  "title": "Video",
+  "fields": [
+    { "key": "field_vid_embed_url", "label": "Video URL (YouTube)", "name": "video_url", "type": "url", "show_in_graphql": 1 },
+    { "key": "field_vid_duration_seconds", "label": "Duration (seconds)", "name": "duration_seconds", "type": "number", "min": 0, "show_in_graphql": 1 },
+    { "key": "field_vid_producer", "label": "Producer", "name": "producer", "type": "text", "show_in_graphql": 1 }
+  ],
+  "location": [[{"param": "post_type", "operator": "==", "value": "video"}]],
+  "show_in_graphql": 1,
+  "graphql_field_name": "videoFields",
+  "graphql_types": ["Video"]
+}

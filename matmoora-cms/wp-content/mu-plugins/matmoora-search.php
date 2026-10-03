@@ -1,134 +1,142 @@
 <?php
 /**
- * Plugin Name: Matmoora — Meilisearch Indexing
- * Description: Keeps Meilisearch in sync with WordPress content. Indexes on
- *              publish, removes on unpublish/delete, and provides a full
- *              rebuild via `wp matmoora reindex`. See TECH_SPEC §12.
- *
- * Index naming is `<post_type>_<language>` (e.g. publications_ar).
- *
- * The search document is intentionally generic until the Phase 1 content
- * model is locked — extend matmoora_build_search_document() with per-type
- * ACF fields, tags, and topics at that point (TECH_SPEC §12.1).
+ * Plugin Name: Matmoora Search
+ * Description: Indexes Matmoora content into Meilisearch on save/delete. Configures Arabic tokenization and archive-page facets (TECH_SPEC §12).
+ * Version: 1.0.0
+ * Author: Matmoora
  */
 
-if (!defined('ABSPATH')) {
-    exit;
-}
+if (!defined('ABSPATH')) exit;
 
-/**
- * Send a request to the Meilisearch HTTP API with the admin key.
- *
- * @return array|WP_Error
- */
-function matmoora_meili_request($method, $path, $body = null) {
-    if (!defined('MATMOORA_MEILI_HOST') || !MATMOORA_MEILI_HOST) {
-        return new WP_Error('matmoora_meili', 'MATMOORA_MEILI_HOST not defined');
-    }
+const MM_INDEXED_TYPES = ['investigation', 'article', 'story', 'publication', 'video', 'audio'];
+const MM_INDEX_NAME    = 'matmoora_content';
 
-    $args = [
-        'method'  => $method,
-        'headers' => [
-            'Authorization' => 'Bearer ' . MATMOORA_MEILI_ADMIN_KEY,
-            'Content-Type'  => 'application/json',
-        ],
-        'timeout' => 10,
-    ];
-    if ($body !== null) {
-        $args['body'] = wp_json_encode($body);
-    }
-
-    return wp_remote_request(rtrim(MATMOORA_MEILI_HOST, '/') . $path, $args);
-}
-
-/** Resolve the WPML language code for a post, defaulting to Arabic. */
-function matmoora_post_language($post_id) {
-    $details = apply_filters('wpml_post_language_details', null, $post_id);
-    return is_array($details) && !empty($details['language_code'])
-        ? $details['language_code']
-        : 'ar';
-}
-
-/** Meilisearch index uid for a post. */
-function matmoora_index_name($post) {
-    return $post->post_type . '_' . matmoora_post_language($post->ID);
-}
-
-/** Build the search document pushed to Meilisearch for a post. */
-function matmoora_build_search_document($post) {
+function mm_meili_settings(): array {
     return [
-        'id'           => (int) $post->ID,
-        'title'        => get_the_title($post),
-        'slug'         => $post->post_name,
-        'excerpt'      => wp_strip_all_tags(get_the_excerpt($post)),
-        'body_text'    => wp_strip_all_tags(strip_shortcodes($post->post_content)),
-        'post_type'    => $post->post_type,
-        'language'     => matmoora_post_language($post->ID),
-        'url'          => get_permalink($post),
-        'published_at' => get_post_time('c', true, $post),
+        'searchableAttributes' => ['title', 'excerpt', 'body', 'contributors'],
+        'filterableAttributes' => ['type', 'location', 'year', 'themes', 'language'],
+        'sortableAttributes'   => ['publication_ts', 'event_ts'],
+        'displayedAttributes'  => ['id', 'slug', 'type', 'title', 'excerpt', 'location', 'year', 'themes', 'language', 'contributors', 'publication_ts', 'event_ts', 'investigation_slug', 'url'],
+        'separatorTokens'      => ['؟', '،', '؛', '«', '»', '…'],
+        'nonSeparatorTokens'   => [],
     ];
 }
 
-/** Index a single post (add or replace). */
-function matmoora_index_post($post) {
-    $index = matmoora_index_name($post);
-    matmoora_meili_request(
-        'POST',
-        "/indexes/{$index}/documents",
-        [matmoora_build_search_document($post)]
-    );
-}
-
-/** Remove a single post from its index. */
-function matmoora_deindex_post($post) {
-    $index = matmoora_index_name($post);
-    matmoora_meili_request('DELETE', "/indexes/{$index}/documents/" . (int) $post->ID);
-}
-
-add_action('transition_post_status', function ($new, $old, $post) {
-    if ($new === $old) {
-        return;
-    }
-    if (wp_is_post_revision($post) || wp_is_post_autosave($post)) {
-        return;
-    }
-
-    if ($new === 'publish') {
-        matmoora_index_post($post);
-    } elseif ($old === 'publish') {
-        matmoora_deindex_post($post);
-    }
-}, 20, 3);
-
-add_action('before_delete_post', function ($post_id, $post) {
-    if ($post instanceof WP_Post) {
-        matmoora_deindex_post($post);
-    }
+add_action('save_post', function ($post_id, $post) {
+    if (wp_is_post_revision($post_id) || wp_is_post_autosave($post_id)) return;
+    if (!in_array($post->post_type, MM_INDEXED_TYPES, true)) return;
+    if ($post->post_status !== 'publish') { mm_meili_delete($post_id); return; }
+    mm_meili_upsert($post);
 }, 10, 2);
 
-/**
- * WP-CLI: `wp matmoora reindex` — full rebuild from scratch (first-run and
- * recovery). TECH_SPEC §12.2.
- */
-if (defined('WP_CLI') && WP_CLI) {
-    WP_CLI::add_command('matmoora reindex', function () {
-        $post_types = get_post_types(['public' => true], 'names');
-        $total = 0;
+add_action('before_delete_post', function ($post_id) {
+    $post = get_post($post_id);
+    if (!$post || !in_array($post->post_type, MM_INDEXED_TYPES, true)) return;
+    mm_meili_delete($post_id);
+});
 
-        foreach ($post_types as $post_type) {
-            $query = new WP_Query([
-                'post_type'      => $post_type,
-                'post_status'    => 'publish',
-                'posts_per_page' => -1,
-                'no_found_rows'  => true,
-            ]);
+function mm_meili_upsert(WP_Post $post): void {
+    $doc = mm_doc_from_post($post);
+    if (!$doc) return;
+    mm_meili_request('POST', '/indexes/' . MM_INDEX_NAME . '/documents', [$doc]);
+}
 
-            foreach ($query->posts as $post) {
-                matmoora_index_post($post);
-                $total++;
-            }
+function mm_meili_delete(int $post_id): void {
+    mm_meili_request('DELETE', '/indexes/' . MM_INDEX_NAME . '/documents/' . $post_id);
+}
+
+function mm_doc_from_post(WP_Post $post): ?array {
+    $type = $post->post_type;
+    $tf = fn(string $tax) => wp_get_post_terms($post->ID, $tax, ['fields' => 'names']) ?: [];
+    $locations = $tf('mm_location');
+    $themes    = array_merge($tf('mm_theme'), $tf('mm_violation'));
+    $years     = $tf('mm_year');
+    $partners  = $tf('mm_partner');
+    $event_ts  = null;
+    $language  = 'ar';
+
+    if (function_exists('get_field')) {
+        if ($type === 'investigation') {
+            $start = get_field('event_start', $post->ID);
+            $event_ts = $start ? strtotime($start) : null;
+        } else {
+            $when = get_field('event_date', $post->ID);
+            $event_ts = $when ? strtotime($when) : null;
+            $language = (string) (get_field('language', $post->ID) ?: 'ar');
         }
+    }
 
-        WP_CLI::success("Reindexed {$total} posts.");
+    return [
+        'id'                 => (int) $post->ID,
+        'slug'               => $post->post_name,
+        'type'               => $type,
+        'title'              => wp_strip_all_tags($post->post_title),
+        'excerpt'            => wp_strip_all_tags($post->post_excerpt),
+        'body'               => wp_strip_all_tags(strip_shortcodes($post->post_content)),
+        'contributors'       => function_exists('get_field') ? (string) (get_field('contributors', $post->ID) ?? '') : '',
+        'location'           => $locations,
+        'themes'             => $themes,
+        'year'               => count($years) ? $years : ($event_ts ? [date('Y', $event_ts)] : []),
+        'partners'           => $partners,
+        'language'           => $language,
+        'publication_ts'     => get_post_time('U', true, $post),
+        'event_ts'           => $event_ts,
+        'investigation_slug' => function_exists('get_field') ? mm_investigation_slug($post) : '',
+        'url'                => str_replace(home_url(), '', get_permalink($post)),
+    ];
+}
+
+function mm_investigation_slug(WP_Post $post): string {
+    $ref = get_field('investigation_ref', $post->ID);
+    if (is_numeric($ref)) {
+        $ref_post = get_post((int) $ref);
+        return $ref_post ? $ref_post->post_name : '';
+    }
+    if ($ref instanceof WP_Post) return $ref->post_name;
+    return '';
+}
+
+if (defined('WP_CLI') && WP_CLI) {
+    WP_CLI::add_command('matmoora search:settings', function () {
+        $res = mm_meili_request('PATCH', '/indexes/' . MM_INDEX_NAME . '/settings', mm_meili_settings());
+        WP_CLI::success('Settings pushed. Task id: ' . ($res['taskUid'] ?? '?'));
     });
+
+    WP_CLI::add_command('matmoora search:reindex', function () {
+        mm_meili_request('DELETE', '/indexes/' . MM_INDEX_NAME . '/documents');
+        foreach (MM_INDEXED_TYPES as $t) {
+            $q = new WP_Query(['post_type' => $t, 'post_status' => 'publish', 'posts_per_page' => -1, 'fields' => 'ids']);
+            foreach ($q->posts as $id) {
+                $post = get_post($id);
+                if ($post) mm_meili_upsert($post);
+            }
+            WP_CLI::log("Reindexed {$t}: {$q->post_count} docs.");
+        }
+        WP_CLI::success('Reindex complete.');
+    });
+}
+
+/**
+ * Minimal HTTP client. Reads MEILI_HOST + MEILI_MASTER_KEY from env, so the
+ * same mu-plugin works on Docker Compose (via docker secrets) and on Railway
+ * (via plain environment variables) without changes.
+ */
+function mm_meili_request(string $method, string $path, $body = null): array {
+    $host = getenv('MEILI_HOST') ?: 'http://meili:7700';
+    $key  = getenv('MEILI_MASTER_KEY') ?: '';
+    $args = [
+        'method'  => $method,
+        'timeout' => 5,
+        'headers' => array_filter([
+            'Content-Type'  => 'application/json',
+            'Authorization' => $key ? 'Bearer ' . $key : '',
+        ]),
+    ];
+    if ($body !== null) $args['body'] = wp_json_encode($body);
+    $resp = wp_remote_request(rtrim($host, '/') . $path, $args);
+    if (is_wp_error($resp)) {
+        error_log('[matmoora-search] ' . $resp->get_error_message());
+        return [];
+    }
+    return json_decode(wp_remote_retrieve_body($resp), true) ?: [];
 }
