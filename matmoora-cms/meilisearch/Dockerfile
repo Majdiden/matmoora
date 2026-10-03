@@ -14,7 +14,8 @@ ENV MEILI_ENV=production
 ENV MEILI_NO_ANALYTICS=true
 ENV MEILI_DB_PATH=/meili_data
 
+# NOTE: no Docker VOLUME directive — Railway rejects it. Attach a
+# Railway Volume at /meili_data via the dashboard instead (see README).
 EXPOSE 7700
-VOLUME ["/meili_data"]
 
 CMD ["sh", "-c", "exec meilisearch --http-addr 0.0.0.0:${PORT:-7700} --master-key \"${MEILI_MASTER_KEY}\" --db-path /meili_data"]
