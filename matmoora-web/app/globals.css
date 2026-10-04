@@ -33,6 +33,8 @@ body {
   min-height: 100dvh;
   background: var(--color-navy);
   color: var(--color-cream);
+  /* Belt-and-braces against a long word or wide child forcing horizontal scroll on narrow phones. */
+  overflow-x: hidden;
 }
 
 .bg-topographic {
