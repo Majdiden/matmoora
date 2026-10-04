@@ -63,8 +63,8 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
         />
       </div>
 
-      <footer className="mt-14 flex items-baseline gap-6">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-cream)]/60">
+      <footer className="mt-14 flex flex-wrap items-baseline gap-x-6 gap-y-3">
+        <p className="w-full text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-cream)]/60 sm:w-auto">
           {t('continueExploring')}
         </p>
         <Link href="/" className="group inline-flex items-center gap-2 text-sm font-medium text-[var(--color-cream)] transition-colors hover:text-[var(--color-orange)]">

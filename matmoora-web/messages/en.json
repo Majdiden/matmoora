@@ -8,7 +8,9 @@
     "collections": "Investigations",
     "archive": "Archive",
     "about": "About",
-    "search": "Search"
+    "search": "Search",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu"
   },
   "LangSwitcher": {
     "label": "Language",

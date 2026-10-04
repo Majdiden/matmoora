@@ -40,7 +40,7 @@ export function Logo({
       priority
       width={logoFullCream.width}
       height={logoFullCream.height}
-      className={`h-10 w-auto select-none ${className ?? ''}`}
+      className={`w-auto select-none ${className ?? 'h-10'}`}
     />
   );
 }

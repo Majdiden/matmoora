@@ -8,7 +8,9 @@
     "collections": "التحقيقات",
     "archive": "الأرشيف",
     "about": "من نحن",
-    "search": "بحث"
+    "search": "بحث",
+    "openMenu": "فتح القائمة",
+    "closeMenu": "إغلاق القائمة"
   },
   "LangSwitcher": {
     "label": "اللغة",
