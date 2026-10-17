@@ -152,7 +152,8 @@ function ContactCard({ title, echo, body, email, actionLabel, locale }: {
           </a>
         </div>
 
-        <div className="grid grid-cols-1 border-t border-[var(--color-navy)]/10 md:grid-cols-3">
+        {/* Feedback (visual-structure doc, image 18): social icons move to the Footer; the contact card keeps email + languages only. */}
+        <div className="grid grid-cols-1 border-t border-[var(--color-navy)]/10 md:grid-cols-2">
           <div className="border-b border-[var(--color-navy)]/10 px-6 py-4 md:border-b-0 md:border-e md:border-[var(--color-navy)]/10">
             <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--color-navy)]/60">
               {locale === 'ar' ? 'البريد الإلكتروني' : 'Email'}
@@ -161,21 +162,11 @@ function ContactCard({ title, echo, body, email, actionLabel, locale }: {
               {email}
             </a>
           </div>
-          <div className="border-b border-[var(--color-navy)]/10 px-6 py-4 md:border-b-0 md:border-e md:border-[var(--color-navy)]/10">
+          <div className="px-6 py-4">
             <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--color-navy)]/60">
               {locale === 'ar' ? 'اللغات' : 'Languages'}
             </p>
             <p className="mt-1 text-sm font-medium text-[var(--color-navy)]">العربية · English</p>
-          </div>
-          <div className="px-6 py-4">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--color-navy)]/60">
-              {locale === 'ar' ? 'الشبكات الاجتماعية' : 'Social'}
-            </p>
-            <div className="mt-1 flex items-center gap-3 text-[var(--color-navy)]">
-              <SocialGlyph kind="twitter" />
-              <SocialGlyph kind="instagram" />
-              <SocialGlyph kind="youtube" />
-            </div>
           </div>
         </div>
       </div>
@@ -197,19 +188,3 @@ function ArrowGlyph({ locale }: { locale: Locale }) {
   );
 }
 
-function SocialGlyph({ kind }: { kind: 'twitter' | 'instagram' | 'youtube' }) {
-  const c = {
-    width: 18, height: 18, viewBox: '0 0 24 24', fill: 'none',
-    stroke: 'currentColor', strokeWidth: 1.6,
-    strokeLinecap: 'round' as const, strokeLinejoin: 'round' as const,
-    'aria-hidden': true,
-  };
-  switch (kind) {
-    case 'twitter':
-      return <svg {...c}><path d="M4 4l7.5 10.2L4.5 20h2.4l6-6.7L17 20h3L12.2 9.4 19.2 4h-2.4L11.2 9.9 7 4z" fill="currentColor" stroke="none" /></svg>;
-    case 'instagram':
-      return <svg {...c}><rect x="3" y="3" width="18" height="18" rx="5" /><circle cx="12" cy="12" r="4" /><circle cx="17.5" cy="6.5" r="0.6" fill="currentColor" /></svg>;
-    case 'youtube':
-      return <svg {...c}><rect x="2.5" y="6" width="19" height="12" rx="3" /><path d="m10.5 9.5 5 2.5-5 2.5z" fill="currentColor" stroke="none" /></svg>;
-  }
-}

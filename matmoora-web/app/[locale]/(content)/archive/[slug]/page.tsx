@@ -50,7 +50,10 @@ export default async function ArchivePiecePage({ params }: { params: Promise<{ l
         <dl className="grid grid-cols-1 divide-y divide-[var(--color-navy)]/10 md:grid-cols-3 md:divide-x md:divide-y-0">
           <Cell label={t('Investigation.location')} value={localizedTitle(item.location, typed)} />
           <Cell label={t('Investigation.eventDate')} value={item.eventDate ?? '—'} />
-          <Cell label={t('Investigation.partners')} value={item.contributors ?? '—'} />
+          <Cell
+            label={t('Investigation.author')}
+            value={item.contributors ?? (typed === 'ar' ? 'مطمورة' : 'Matmoora')}
+          />
         </dl>
         <dl className="grid grid-cols-1 divide-y divide-[var(--color-navy)]/10 border-t border-[var(--color-navy)]/10 md:grid-cols-3 md:divide-x md:divide-y-0">
           <Cell

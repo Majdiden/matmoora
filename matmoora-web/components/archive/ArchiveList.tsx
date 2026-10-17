@@ -38,10 +38,17 @@ export function ArchiveList({ items, locale }: { items: ContentPieceFx[]; locale
                     {localizedTitle(item.excerpt, locale)}
                   </p>
                 )}
+                {/* Author / contributor shown on every screen (feedback image 14). */}
+                <p className="mt-3 text-xs text-[var(--color-navy)]/70">
+                  <span className="font-semibold uppercase tracking-[0.14em] text-[var(--color-navy)]/55">
+                    {locale === 'ar' ? 'المؤلف' : 'Author'}
+                  </span>
+                  <span className="mx-1" aria-hidden>·</span>
+                  <span className="font-medium">{item.contributors ?? (locale === 'ar' ? 'مطمورة' : 'Matmoora')}</span>
+                </p>
               </div>
               <div className="hidden shrink-0 text-end text-xs text-[var(--color-navy)]/70 md:block">
                 <p className="font-medium">{localizedTitle(item.location, locale)}</p>
-                {item.contributors && <p className="mt-1">{item.contributors}</p>}
                 {item.downloadable && (
                   <p className="mt-1 inline-flex items-center gap-1 text-[var(--color-orange)]">
                     PDF

@@ -40,8 +40,7 @@ function Card({ inv, locale, idx }: { inv: InvestigationFx; locale: Locale; idx:
         </h3>
       </div>
       <div className="relative border-t border-[var(--color-navy)]/10 px-6 py-4">
-        <PictureHint hue={inv.cover.hue} />
-        <p className="mt-4 line-clamp-3 text-sm leading-relaxed text-[var(--color-navy-900)]/80">
+        <p className="line-clamp-3 text-sm leading-relaxed text-[var(--color-navy-900)]/80">
           {summary}
         </p>
         <dl className="mt-4 grid grid-cols-2 gap-x-4 gap-y-1 text-xs">
@@ -55,19 +54,5 @@ function Card({ inv, locale, idx }: { inv: InvestigationFx; locale: Locale; idx:
       </div>
       <span aria-hidden className="absolute inset-x-4 bottom-2 h-px scale-x-0 bg-[var(--color-orange)] transition-transform duration-500 group-hover:scale-x-100 group-focus-visible:scale-x-100" />
     </Link>
-  );
-}
-
-function PictureHint({ hue }: { hue: string }) {
-  const stroke = hue === 'orange' ? 'var(--color-orange)' : 'var(--color-navy)';
-  return (
-    <svg viewBox="0 0 400 90" className="h-16 w-full" aria-hidden>
-      <g fill="none" stroke={stroke} strokeWidth="0.8" opacity="0.35">
-        <path d="M-10 30 Q 80 10 160 40 T 410 30" />
-        <path d="M-10 50 Q 90 30 170 60 T 410 50" />
-        <path d="M-10 70 Q 100 50 180 78 T 410 68" />
-      </g>
-      <circle cx="200" cy="46" r="4" fill={stroke} opacity="0.6" />
-    </svg>
   );
 }
