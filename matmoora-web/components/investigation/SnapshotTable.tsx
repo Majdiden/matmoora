@@ -17,6 +17,8 @@ export function SnapshotTable({
   const partners = inv.partners.length
     ? inv.partners.join(' · ')
     : locale === 'ar' ? 'مطمورة' : 'Matmoora';
+  // Author is Matmoora by default; partners are listed separately below.
+  const author = locale === 'ar' ? 'مطمورة' : 'Matmoora';
 
   return (
     <div className="overflow-hidden rounded-lg border border-[var(--color-cream)]/15 bg-[var(--color-cream)] text-[var(--color-ink)]">
@@ -26,6 +28,9 @@ export function SnapshotTable({
       <dl className="grid grid-cols-1 divide-y divide-[var(--color-navy)]/10 md:grid-cols-3 md:divide-x md:divide-y-0">
         <Cell label={t('Investigation.location')} value={location} />
         <Cell label={t('Investigation.eventDate')} value={timeframe} />
+        <Cell label={t('Investigation.author')} value={author} />
+      </dl>
+      <dl className="grid grid-cols-1 divide-y divide-[var(--color-navy)]/10 border-t border-[var(--color-navy)]/10 md:grid-cols-1 md:divide-x md:divide-y-0">
         <Cell label={t('Investigation.partners')} value={partners} />
       </dl>
       <dl className="grid grid-cols-1 divide-y divide-[var(--color-navy)]/10 border-t border-[var(--color-navy)]/10 md:grid-cols-3 md:divide-x md:divide-y-0">

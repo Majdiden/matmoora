@@ -5,7 +5,7 @@
     "tagline": "A public archive of documented human rights violations in Sudan"
   },
   "Nav": {
-    "collections": "Investigations",
+    "collections": "Collections",
     "archive": "Archive",
     "about": "About",
     "search": "Search",
@@ -32,12 +32,13 @@
     "location": "Location",
     "methodology": "Methodology",
     "partners": "Partners",
+    "author": "Author",
     "languages": "Languages",
     "downloadPdf": "Download the full report (PDF)",
     "relatedContent": "Related content",
     "relatedInvestigations": "Related investigations",
     "activities": "Related activities",
-    "backToCollections": "Back to investigations",
+    "backToCollections": "Back to collections",
     "publishedOn": "Published",
     "eventDate": "Event date"
   },
@@ -90,7 +91,7 @@
     "contactEmail": "hello@matmoora.org",
     "contactActionLabel": "Write to us",
     "continueExploring": "Continue exploring",
-    "continueInvestigations": "Investigations",
+    "continueInvestigations": "Collections",
     "continueArchive": "The archive"
   },
   "Search": {
