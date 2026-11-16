@@ -8,6 +8,7 @@ import { PreviewBanner } from '@/components/layout/PreviewBanner';
 import { fontArabic, fontLatin } from '@/lib/fonts';
 import { dirForLocale, type Locale } from '@/lib/i18n/config';
 import { routing } from '@/lib/i18n/routing';
+import { getSiteSettings } from '@/lib/wp/settings';
 import '../globals.css';
 
 export function generateStaticParams() {
@@ -40,10 +41,15 @@ export default async function LocaleLayout({
   setRequestLocale(locale);
   const typedLocale = locale as Locale;
 
+  // The theme comes from WordPress (Settings → Matmoora). Reading it
+  // here lets editors swap the palette site-wide without a redeploy.
+  const { theme } = await getSiteSettings();
+
   return (
     <html
       lang={typedLocale}
       dir={dirForLocale(typedLocale)}
+      data-theme={theme}
       className={`${fontArabic.variable} ${fontLatin.variable}`}
     >
       <body className="bg-topographic-navy flex min-h-dvh flex-col text-[var(--color-cream)] antialiased">
