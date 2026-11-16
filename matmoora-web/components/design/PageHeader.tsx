@@ -41,9 +41,14 @@ export function PageHeader({
             {title}
           </h1>
           {echo && (
+            // Font selection (Arabic vs Latin) still follows the echo's own
+            // language, but we deliberately don't flip `dir` on the paragraph:
+            // Unicode bidi already shapes the characters correctly, and
+            // leaving the paragraph in the page's direction keeps the echo
+            // sitting right under the title instead of floating to the
+            // opposite side of the hero container.
             <p
               lang={locale === 'ar' ? 'en' : 'ar'}
-              dir={locale === 'ar' ? 'ltr' : 'rtl'}
               className="mt-2 text-sm font-medium tracking-[0.14em] text-[var(--color-cream)]/50 md:text-base"
               style={{ animation: 'fade-up 700ms ease-out 120ms both' }}
             >
