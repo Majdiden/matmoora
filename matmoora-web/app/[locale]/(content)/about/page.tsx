@@ -24,10 +24,11 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
     { value: '1000+', label: t('statMethodology') },
   ];
 
-  const sections: { n: number; icon: 'who' | 'what' | 'how'; id: string; title: string; echo: string; body: string; align: 'start' | 'end' }[] = [
-    { n: 1, icon: 'who',  id: 'who',         title: t('whoTitle'),  echo: t('whoEcho'),  body: t('whoBody'),  align: 'start' },
-    { n: 2, icon: 'what', id: 'what',        title: t('whatTitle'), echo: t('whatEcho'), body: t('whatBody'), align: 'end' },
-    { n: 3, icon: 'how',  id: 'methodology', title: t('howTitle'),  echo: t('howEcho'),  body: t('howBody'),  align: 'start' },
+  const sections: { n: number; icon: 'who' | 'how' | 'vision' | 'mission'; id: string; title: string; echo: string; body: string; align: 'start' | 'end' }[] = [
+    { n: 1, icon: 'who',     id: 'who',         title: t('whoTitle'),     echo: t('whoEcho'),     body: t('whoBody'),     align: 'start' },
+    { n: 2, icon: 'how',     id: 'methodology', title: t('howTitle'),     echo: t('howEcho'),     body: t('howBody'),     align: 'end'   },
+    { n: 3, icon: 'vision',  id: 'vision',      title: t('visionTitle'),  echo: t('visionEcho'),  body: t('visionBody'),  align: 'start' },
+    { n: 4, icon: 'mission', id: 'mission',     title: t('missionTitle'), echo: t('missionEcho'), body: t('missionBody'), align: 'end'   },
   ];
 
   return (
@@ -81,7 +82,7 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
 }
 
 function DocumentCard({ section, idx }: {
-  section: { n: number; icon: 'who' | 'what' | 'how'; id: string; title: string; echo: string; body: string; align: 'start' | 'end' };
+  section: { n: number; icon: 'who' | 'how' | 'vision' | 'mission'; id: string; title: string; echo: string; body: string; align: 'start' | 'end' };
   idx: number;
 }) {
   const align = section.align === 'end';
@@ -133,7 +134,7 @@ function ContactCard({ title, echo, body, email, actionLabel, locale }: {
         <span aria-hidden className="absolute inset-y-0 start-0 w-1 bg-[var(--color-orange)]" />
         <div className="grid gap-6 p-8 md:grid-cols-[220px_1fr_auto] md:items-center md:p-10">
           <div className="flex items-start justify-between md:flex-col md:justify-start md:gap-5">
-            <SectionMarker n={4} />
+            <SectionMarker n={5} />
             <span className="text-[var(--color-orange)]" aria-hidden>
               <SectionIcon name="contact" size={36} />
             </span>

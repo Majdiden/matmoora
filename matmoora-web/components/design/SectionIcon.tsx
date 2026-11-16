@@ -1,4 +1,4 @@
-type IconName = 'who' | 'what' | 'how' | 'contact';
+type IconName = 'who' | 'what' | 'how' | 'vision' | 'mission' | 'contact';
 
 export function SectionIcon({ name, size = 28 }: { name: IconName; size?: number }) {
   const c = {
@@ -36,6 +36,25 @@ export function SectionIcon({ name, size = 28 }: { name: IconName; size?: number
           <path d="M6 22 C 8 12, 24 12, 26 22" />
           <path d="M6 22 C 8 30, 24 30, 26 22" opacity="0.55" strokeDasharray="2 2" />
           <circle cx="16" cy="17" r="1.6" fill="currentColor" />
+        </svg>
+      );
+    case 'vision':
+      // An open eye — witnessing / seeing.
+      return (
+        <svg {...c}>
+          <path d="M3 16 C 8 9, 24 9, 29 16 C 24 23, 8 23, 3 16 Z" />
+          <circle cx="16" cy="16" r="4" />
+          <circle cx="16" cy="16" r="1.4" fill="currentColor" />
+        </svg>
+      );
+    case 'mission':
+      // A target with a flag stalk — direction, aim.
+      return (
+        <svg {...c}>
+          <circle cx="16" cy="16" r="10" />
+          <circle cx="16" cy="16" r="5.5" />
+          <circle cx="16" cy="16" r="1.6" fill="currentColor" />
+          <path d="M22 16 L 28 10" />
         </svg>
       );
     case 'contact':

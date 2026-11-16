@@ -1,11 +1,15 @@
 import { useTranslations } from 'next-intl';
 import { Link } from '@/lib/i18n/navigation';
 
-const socials: { kind: 'twitter' | 'instagram' | 'youtube'; label: string; href: string }[] = [
-  { kind: 'twitter',   label: 'Twitter / X', href: 'https://x.com/matmoora' },
-  { kind: 'instagram', label: 'Instagram',   href: 'https://instagram.com/matmoora' },
-  { kind: 'youtube',   label: 'YouTube',     href: 'https://youtube.com/@matmoora' },
+type SocialKind = 'facebook' | 'linkedin' | 'instagram';
+
+const socials: { kind: SocialKind; label: string; href: string }[] = [
+  { kind: 'facebook',  label: 'Facebook',  href: 'https://www.facebook.com/Matmooraa' },
+  { kind: 'linkedin',  label: 'LinkedIn',  href: 'https://www.linkedin.com/company/matmoora' },
+  { kind: 'instagram', label: 'Instagram', href: 'https://www.instagram.com/matmoora' },
 ];
+
+const CONTACT_EMAIL = 'info@matmoora.org';
 
 export function Footer() {
   const t = useTranslations();
@@ -25,9 +29,13 @@ export function Footer() {
         </nav>
         <div className="text-sm">
           <p className="font-medium">{t('Footer.contact')}</p>
-          <a href="mailto:hello@matmoora.org" className="mt-1 inline-block opacity-80 transition hover:opacity-100">hello@matmoora.org</a>
-          {/* Socials live in the footer per the visual-structure feedback (image 18). */}
-          <ul className="mt-4 flex items-center gap-4" aria-label="Social links">
+          <a
+            href={`mailto:${CONTACT_EMAIL}`}
+            className="mt-1 inline-block opacity-80 transition hover:opacity-100"
+          >
+            {CONTACT_EMAIL}
+          </a>
+          <ul className="mt-4 flex items-center gap-4" aria-label={t('Footer.socials')}>
             {socials.map((s) => (
               <li key={s.kind}>
                 <a
@@ -53,7 +61,7 @@ export function Footer() {
   );
 }
 
-function SocialGlyph({ kind }: { kind: 'twitter' | 'instagram' | 'youtube' }) {
+function SocialGlyph({ kind }: { kind: SocialKind }) {
   const c = {
     width: 18, height: 18, viewBox: '0 0 24 24', fill: 'none',
     stroke: 'currentColor', strokeWidth: 1.6,
@@ -61,11 +69,30 @@ function SocialGlyph({ kind }: { kind: 'twitter' | 'instagram' | 'youtube' }) {
     'aria-hidden': true,
   };
   switch (kind) {
-    case 'twitter':
-      return <svg {...c}><path d="M4 4l7.5 10.2L4.5 20h2.4l6-6.7L17 20h3L12.2 9.4 19.2 4h-2.4L11.2 9.9 7 4z" fill="currentColor" stroke="none" /></svg>;
+    case 'facebook':
+      // Classic "f" glyph in a rounded square.
+      return (
+        <svg {...c}>
+          <path d="M14 7h2V4h-2.5A3.5 3.5 0 0 0 10 7.5V10H8v3h2v7h3v-7h2.2l.6-3H13V7.8c0-.44.36-.8.8-.8z" fill="currentColor" stroke="none" />
+        </svg>
+      );
+    case 'linkedin':
+      // "in" block with the dot.
+      return (
+        <svg {...c}>
+          <rect x="3" y="3" width="18" height="18" rx="2.5" />
+          <path d="M8 10v7" />
+          <circle cx="8" cy="7.5" r="1.1" fill="currentColor" stroke="none" />
+          <path d="M12 17v-4.2a2.3 2.3 0 0 1 4.6 0V17M12 10v7" />
+        </svg>
+      );
     case 'instagram':
-      return <svg {...c}><rect x="3" y="3" width="18" height="18" rx="5" /><circle cx="12" cy="12" r="4" /><circle cx="17.5" cy="6.5" r="0.6" fill="currentColor" /></svg>;
-    case 'youtube':
-      return <svg {...c}><rect x="2.5" y="6" width="19" height="12" rx="3" /><path d="m10.5 9.5 5 2.5-5 2.5z" fill="currentColor" stroke="none" /></svg>;
+      return (
+        <svg {...c}>
+          <rect x="3" y="3" width="18" height="18" rx="5" />
+          <circle cx="12" cy="12" r="4" />
+          <circle cx="17.5" cy="6.5" r="0.6" fill="currentColor" />
+        </svg>
+      );
   }
 }
