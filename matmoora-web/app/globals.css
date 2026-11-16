@@ -29,6 +29,27 @@ html {
 
 html[lang="ar"] { font-family: var(--font-arabic); }
 
+/*
+ * Theme variants. Editable from the WordPress dashboard
+ * (Settings → Matmoora → Theme). The settings reader on the Next.js
+ * side sets `<html data-theme="…">`; this block redefines the palette
+ * tokens so every component recolours without any per-component edits.
+ *
+ * dusk: swap navy and orange — orange becomes the page background,
+ * navy becomes the accent. Cream surfaces stay unchanged.
+ */
+:root[data-theme="dusk"] {
+  --color-navy:      #9e3a11;
+  --color-navy-100:  #fde3d2;
+  --color-navy-200:  #f4b89a;
+  --color-navy-400:  #d87a44;
+  --color-navy-600:  #7c2c0a;
+  --color-navy-900:  #5c1f05;
+
+  --color-orange:      #20234f;
+  --color-orange-soft: #5a5d8f;
+}
+
 body {
   min-height: 100dvh;
   background: var(--color-navy);
