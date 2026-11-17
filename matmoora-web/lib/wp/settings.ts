@@ -1,6 +1,5 @@
 import { gql } from 'graphql-request';
 import { wpClient } from './client';
-import { shouldUseFixtures } from './fixtures';
 
 /**
  * Site-wide settings editors control from the WordPress dashboard
@@ -93,13 +92,18 @@ function coercePalette(raw: RawPalette | null | undefined, fallback: Palette): P
  *   2. `MATMOORA_THEME` env var (deploy-level override, preview builds).
  *   3. Hard defaults.
  *
- * Any network/parse failure falls through to the defaults so the public
- * site never breaks over a settings read.
+ * Site-wide SETTINGS are intentionally decoupled from the content
+ * fixture flag: editors should be able to tune the palette from WP
+ * even while the public content layer is still being served from
+ * fixtures. We only skip the network round-trip when no WPGraphQL
+ * endpoint is configured at all. Any network/parse failure falls
+ * through to the defaults so the public site never breaks over a
+ * settings read.
  */
 export async function getSiteSettings(): Promise<SiteSettings> {
   const envTheme = coerceTheme(process.env.MATMOORA_THEME);
 
-  if (shouldUseFixtures() || !process.env.WORDPRESS_GRAPHQL_ENDPOINT) {
+  if (!process.env.WORDPRESS_GRAPHQL_ENDPOINT) {
     return { ...DEFAULT_SETTINGS, theme: envTheme };
   }
 
